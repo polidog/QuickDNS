@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 /nbproject/private/
 nbproject/
+=======
+vendor
+composer.lock
+>>>>>>> 4cf97ae8e2187be78f1d4643bc7703fb0b8844ce
