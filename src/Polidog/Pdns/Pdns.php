@@ -186,10 +186,15 @@ class Pdns {
 		
 		
 		
-$answer = $buffer[0].$buffer[1].chr(129).chr(128).$buffer[4].$buffer[5].$buffer[4].$buffer[5].chr(0).chr(0).chr(0).chr(0);
-$answer .= substr($buffer, 12);
-$answer .= chr(192).chr(12);
-$answer .= chr(0).chr(1).chr(0).chr(1).chr(0).chr(0).chr(0).chr(60).chr(0).chr(4);
+		
+		
+		
+		
+		
+		$answer = $buffer[0].$buffer[1].chr(129).chr(128).$buffer[4].$buffer[5].$buffer[4].$buffer[5].chr(0).chr(0).chr(0).chr(0);
+		$answer .= substr($buffer, 12);
+		$answer .= chr(192).chr(12);
+		$answer .= chr(0).chr(1).chr(0).chr(1).chr(0).chr(0).chr(0).chr(60).chr(0).chr(4);
 		
 		
 		$_ip ="";
