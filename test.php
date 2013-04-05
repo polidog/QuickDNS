@@ -6,11 +6,11 @@ $server = new Pdns();
 
 $server->init(function() use ($server){
 	$server->set('driver','List');
-	$server->set('port', 53);
+	$server->set('stdout', true);
 });
 
 try {
-	$server->listen();
+	$server->listen(10053);
 } catch (PdnsException $pe) {
 	echo $pe->getMessage()."\n";
 }
