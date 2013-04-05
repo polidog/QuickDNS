@@ -1,8 +1,10 @@
 <?php
-namespace Polidog\Pdns\Storage\Drivar;
-class ListDriver extends DrivarAbstract {
+namespace Polidog\Pdns\Driver;
+class ListDriver extends DriverAbstract {
 	
-	private $list = array();
+	private $list = array(
+		'www.polidog.jp' => '133.242.145.155',
+	);
 	
 	public function get($domain) {
 		if (isset($this->list[$domain]) ) {
@@ -16,3 +18,6 @@ class ListDriver extends DrivarAbstract {
 		return $this;
 	}
 }
+
+//ListDirver
+//ListDriver
