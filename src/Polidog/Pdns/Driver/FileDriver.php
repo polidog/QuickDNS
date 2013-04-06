@@ -2,6 +2,8 @@
 namespace Polidog\Pdns\Driver;
 class FileDriver extends DriverAbstract {
 	
+	public function connect() {}
+	
 	
 	public function get($domain) {
 		;

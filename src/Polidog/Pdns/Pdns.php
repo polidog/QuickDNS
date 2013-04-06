@@ -1,6 +1,7 @@
 <?php
 namespace Polidog\Pdns;
 use Polidog\Pdns\PdnsException;
+
 /**
  * DNSサーバー
  * @property Polidog\Pdns\Driver\DriverAbstract $Driver ドライバークラス
@@ -146,7 +147,7 @@ class Pdns {
 	
 	
 	private function lookup($buffer, $client_ip, $client_port) {
-		$this->output("   ");
+		
 		// ドメインの抜き出し
 		$domain = false;
 		$tmp = substr($buffer, 12);
@@ -162,9 +163,9 @@ class Pdns {
 		}
 		$i += 2;
 		$queryType = array_search((string)ord($tmp[$i]), $this->getTypes() );
-		if ($queryType != "A") {
+		if ($queryType != "A" && $queryType != "CNAME") {
 			// Aレコード以外はムリポ
-			return $this->lookupExternal($buffer, $client_ip, $client_port);
+			return $this->lookupExternal($domain, $buffer, $client_ip, $client_port);
 		}
 		
 		$this->output("question domain:{$domain}","info");
@@ -175,22 +176,9 @@ class Pdns {
 		if (!$ip) {
 			// ローカル環境で名前解決出来ない場合はそとに行く
 			$this->output("call lookupExternal","debug");
-			return $this->lookupExternal($buffer, $client_ip, $client_port);
+			return $this->lookupExternal($domain, $buffer, $client_ip, $client_port);
 		}
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		$answer = $buffer[0].$buffer[1].chr(129).chr(128).$buffer[4].$buffer[5].$buffer[4].$buffer[5].chr(0).chr(0).chr(0).chr(0);
 		$answer .= substr($buffer, 12);
 		$answer .= chr(192).chr(12);
@@ -207,18 +195,44 @@ class Pdns {
 		
 	}
 	
-	private function lookupExternal($buffer, $client_ip, $client_port) {
+	/**
+	 * 外部のDNSに問い合わせに行く
+	 * @param string $domain
+	 * @param string $buffer
+	 * @param string $client_ip
+	 * @param string $client_port
+	 * @throws PdnsException
+	 */
+	private function lookupExternal($domain, $buffer, $client_ip, $client_port) {
 		$socket = socket_create(AF_INET,SOCK_DGRAM, SOL_UDP);
 		$externalDnsIp = $this->get('external_dns');
 		if (!$externalDnsIp) {
 			throw new PdnsException("no external dns server ip address");
 		}
 		
+		// 別DNSの問い合わせ
 		socket_connect($socket, $externalDnsIp, 53);
 		socket_send($socket, $buffer, strLen($buffer), 0);
 		$resultBuffer = socket_read($socket, 1024*8);
 		socket_close($socket);
 		
+		// ipアドレスの取得
+		$tmp = substr($resultBuffer, -4, 4);
+		$length = strlen($tmp);
+		$ip = null;
+		for ($i = 0; $i < $length; $i++) {
+			$char = ord($tmp[$i]);
+			echo $char;
+			$ip .= $char."."; 
+		}
+		$ip = rtrim($ip,".");
+		
+		// キャッシュする
+		if (!empty($ip)) {
+			$this->Driver->set(rtrim($domain,"."),$ip);
+		}
+		
+		// クライアントにDNSの結果を渡す
 		socket_sendto($this->socket,$resultBuffer, strlen($resultBuffer), 0,$client_ip, $client_port);
 	}
 	

@@ -6,6 +6,9 @@ class ListDriver extends DriverAbstract {
 		'www.polidog.jp' => '133.242.145.155',
 	);
 	
+	
+	public function connect() {}
+	
 	public function get($domain) {
 		if (isset($this->list[$domain]) ) {
 			return $this->list[$domain];

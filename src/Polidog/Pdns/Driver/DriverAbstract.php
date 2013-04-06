@@ -8,6 +8,9 @@ abstract class DriverAbstract {
 		$this->config = $config;
 	}
 	
+	abstract public function connect();
+
+
 	abstract public function set($domain,$ip);
 		
 	abstract public function get($domain);
