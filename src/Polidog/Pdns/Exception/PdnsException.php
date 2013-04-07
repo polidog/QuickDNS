@@ -1,5 +1,5 @@
 <?php
-namespace Polidog\Pdns;
+namespace Polidog\Pdns\Exception;
 class PdnsException extends \Exception
 {
 	
