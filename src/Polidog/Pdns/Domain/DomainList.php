@@ -4,10 +4,23 @@ namespace Polidog\Pdns\Domain;
 
 class DomainList {
 
-	private $data = array();
-
+	private $ArrayObject;
+	
+	public function __construct($data = array()) {
+		if (!empty($data)) {
+			$this->ArrayObject = new \ArrayObject($data);
+		} else {
+			$this->ArrayObject = new \ArrayObject();
+		}
+	}
+	
+	/**
+	 * セットする
+	 * @param Domain $domain
+	 */
 	public function set(Domain $domain) {
-		$this->data[] = $domain;
+		$this->ArrayObject->append($domain);
+		return $this;
 	}
 
 	/**
@@ -26,6 +39,27 @@ class DomainList {
 	 */
 	public function serachIp($ip) {
 		return $this->_search($ip, 'ipAddress');
+	}
+	
+	/**
+	 * ドメインの削除を行う
+	 * @param type $domain
+	 * @return boolean
+	 */
+	public function clearDomain($domain) {
+		$domainIterator = $this->getIterator();
+		$return = false;
+		while($domainIterator->valid()) {
+			if ($domainIterator->current()->domain == $domain) {
+				if ( $this->ArrayObject->offsetExists($domainIterator->key()) ) {
+					$this->ArrayObject->offsetUnset($domainIterator->key());
+					$return = true;
+					break;
+				}
+			}
+			$domainIterator->next();
+		}
+		return $return;
 	}
 	
 	/**
@@ -56,8 +90,12 @@ class DomainList {
 		
 	}
 
+	/**
+	 * イテレータを取得する
+	 * @return DomainIterator
+	 */
 	public function getIterator() {
-		return new DomainIterator($this->data);
+		return new DomainIterator($this->ArrayObject->getIterator());
 	}
 
 }

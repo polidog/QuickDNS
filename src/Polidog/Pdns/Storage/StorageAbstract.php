@@ -27,10 +27,22 @@ abstract class StorageAbstract {
 	 * @return Domain;
 	 */
 	abstract public function get($domain);
-	
+			
 	
 	/**
 	 * キャッシュを生成する
 	 */
-	abstract function cache($domain,$ip,$expir);
+	abstract function setCache($domain, $ip, $expir);
+	
+	/**
+	 * キャッシュを取得する
+	 */
+	abstract function getCache($domain);
+	
+	/**
+	 * キャッシュを破棄する
+	 */
+	abstract function clearCache($domain);
+	
+	
 }

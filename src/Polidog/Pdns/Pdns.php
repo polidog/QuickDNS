@@ -214,6 +214,16 @@ class Pdns {
 		return ( is_object($closuer) && $closuer instanceof \Closure );
 	}
 
+	
+	/**
+	 * ストレージを取得する
+	 * @return array
+	 */
+	public function getStorage() {
+		return $this->Storage;
+	}
+	
+	
 	/**
 	 * ドライバーをロードする
 	 * @param array $config
@@ -233,6 +243,7 @@ class Pdns {
 		
 		$this->Storage = new $className($config);
 	}
+	
 
 	/**
 	 * DNSに問い合わせ処理をする
@@ -268,6 +279,10 @@ class Pdns {
 		$this->output("query type:{$queryType}", "info");
 
 		$domainObject = $this->Storage->get(rtrim($domainName, "."));
+		if (!$domainObject->is()) {
+			// キャッシュから取得する
+			$domainObject = $this->Storage->getCache(rtrim($domainName, "."));
+		}
 		
 		$this->output("ip address:{$domainObject->ipAddress}", "info");
 		
@@ -321,7 +336,7 @@ class Pdns {
 
 		// キャッシュする
 		if (!empty($ip)) {
-			$this->Storage->cache(rtrim($domainName, "."), $ip);
+			$this->Storage->setCache(rtrim($domainName, "."), $ip, 3600);
 		}
 
 		// クライアントにDNSの結果を渡す
@@ -360,7 +375,8 @@ class Pdns {
 							'www.polidog.jp' => '133.242.145.155',
 						),
 					),
-					'external_dns' => '8.8.8.8',			
+					'external_dns' => '8.8.8.8',
+					'cache_expir' => 3600,
 				);
 			}
 			return $defaultConfig;

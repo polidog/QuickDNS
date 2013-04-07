@@ -6,11 +6,15 @@ use \Polidog\Pdns\Domain\Domain;
 class ListStorage extends StorageAbstract {
 	
 	protected $DomainList;
-	
-	
+	protected $CacheDomainList;
+
+
+
+
 	public function __construct($config) {
 		parent::__construct($config);
 		$this->DomainList = new DomainList();
+		$this->CacheDomainList = new DomainList();
 		
 		if (isset($config['data']) && is_array($config['data'])) {
 			foreach ($config['data'] as $domain => $ip) {
@@ -29,8 +33,19 @@ class ListStorage extends StorageAbstract {
 		return $this;
 	}
 	
-	public function cache($domain, $ip, $expir = 3600) {
-		$this->set($domain,$ip,$expir);
+	public function getCache($domain) {
+		return $this->CacheDomainList->searchDomain($domain);
 	}
+	
+	public function setCache($domain, $ip, $expir) {
+		$this->CacheDomainList->set(new Domain($domain,$ip,$expir));
+		return $this;
+	}
+	
+	public function clearCache($domain) {
+		return $this->CacheDomainList->clearDomain($domain);
+	}
+
+
 	
 }
