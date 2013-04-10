@@ -33,6 +33,10 @@ class ListStorage extends StorageAbstract {
 		return $this;
 	}
 	
+	protected function clearExpiredDomain() {
+		$this->DomainList->clearExpiredDomain();
+	}
+	
 	public function getCache($domain) {
 		return $this->CacheDomainList->searchDomain($domain);
 	}
@@ -46,6 +50,24 @@ class ListStorage extends StorageAbstract {
 		return $this->CacheDomainList->clearDomain($domain);
 	}
 
-
+	protected function clearExpiredCacheDomain() {
+		$this->CacheDomainList->clearExpiredDomain();
+	}
+	
+	public function getList($isAll = false) {
+		if ($isAll) {
+			return $this->DomainList->getAllList();
+		} else {
+			return $this->DomainList->getList();
+		}
+	}
+	
+	public function getCacheList($isAll = false) {
+		if ($isAll) {
+			return $this->CacheDomainList->getAllList();
+		} else {
+			return $this->CacheDomainList->getList();
+		}
+	}
 	
 }

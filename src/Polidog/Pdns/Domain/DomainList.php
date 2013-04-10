@@ -63,6 +63,17 @@ class DomainList {
 	}
 	
 	/**
+	 * 有効期限が切れてるデータの削除を行う
+	 */
+	public function clearExpiredDomain() {
+		foreach ($this->ArrayObject as $index => $object) {
+			if ($object->isExpired() === true) {
+				$object->offsetUnset($index);
+			}
+		}
+	}
+	
+	/**
 	 * 検索処理
 	 * @param string $target
 	 * @param stirng $type ip or domain
@@ -97,5 +108,21 @@ class DomainList {
 	public function getIterator() {
 		return new DomainIterator($this->ArrayObject->getIterator());
 	}
-
+	
+	public function getList() {
+		$domainIterator = $this->getIterator();
+		$return = array();
+		while($domainIterator->valid()) {
+			$return[] = $domainIterator->current();
+		}
+		return $return;
+	}
+	
+	public function getAllList() {
+		$return = array();
+		foreach ($this->ArrayObject as $object) {
+			$return[] = $object;
+		}
+		return $return;
+	}
 }

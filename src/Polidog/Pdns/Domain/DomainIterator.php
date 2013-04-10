@@ -9,7 +9,7 @@ class DomainIterator extends \FilterIterator {
 	}
 	
 	public function accept() {
-		return $this->getInnerIterator()->current()->isExpir();
+		return ($this->getInnerIterator()->current()->isExpired() == false);
 	}
 	
 	public function currentIp() {

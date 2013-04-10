@@ -192,6 +192,10 @@ class Pdns {
 		$this->output("start pdns server", "info");
 		while (true) {
 			try {
+		
+				// ドメインキャッシュの解放
+				$this->Storage->cleaningDomain();
+				
 				$len = socket_recvfrom($this->socket, $buffer, 1024 * 4, 0, $ip, $port);
 				if ($len > 0) {
 					$this->lookup($buffer, $ip, $port);
@@ -254,7 +258,6 @@ class Pdns {
 	 * @throws PdnsException
 	 */
 	private function lookup($buffer, $client_ip, $client_port) {
-
 		// ドメインの抜き出し
 		$domainName = false;
 		$tmp = substr($buffer, 12);

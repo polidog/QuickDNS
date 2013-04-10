@@ -20,7 +20,7 @@ class Domain {
 				return $this->$name;
 			}
 		} else if ($name == 'expir'){
-			return $this->isExpir();
+			return $this->isExpired();
 		}
 		return false;
 	}
@@ -38,7 +38,7 @@ class Domain {
 	}
 	
 	public function is() {
-		if ($this->ipAddress && $this->domain && $this->isExpir()) {
+		if ($this->ipAddress && $this->domain && $this->isExpired() == false) {
 			return true;
 		}
 		return false;
@@ -48,11 +48,11 @@ class Domain {
 	 * 有効期限を確認する
 	 * @return boolean
 	 */
-	public function isExpir() {
+	public function isExpired() {
 		if (empty($this->startExpirTime) && empty($this->endExpirTime)) {
-			return true;
+			return false;
 		}
-		return ( $this->endExpirTime > time() );
+		return ( $this->endExpirTime < time() );
 	}
 	
 	public function ttl() {
