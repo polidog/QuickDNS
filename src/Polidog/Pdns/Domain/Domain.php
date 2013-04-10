@@ -17,7 +17,7 @@ class Domain {
 	 * @param string $ipAddress
 	 * @param int $expir timestamp
 	 */
-	public function __construct($domain, $ipAddress, $expir = null) {
+	public function __construct($domain = null, $ipAddress = null, $expir = -1) {
 		$this->set($domain,$ipAddress,$expir);
 	}
 	
@@ -32,7 +32,24 @@ class Domain {
 				return $this->$name;
 			}
 		}
-		return parent::__get($name);
+	}
+	
+	/**
+	 * 指定したドメインがあるかチェックする
+	 * @param string $domainName
+	 * @return boolean
+	 */
+	public function domainExist($domainName) {
+		return ($this->domain == $domainName);
+	}
+	
+	/**
+	 * IPアドレスがあるかチェックする
+	 * @param string $ipAddress
+	 * @return boolean
+	 */
+	public function ipAddressExist($ipAddress) {
+		return ($this->ipAddress == $ipAddress);
 	}
 	
 	/**
@@ -62,7 +79,7 @@ class Domain {
 			return -1;
 		}		
 		
-		$time =  $this->endExpirTime - $this->startExpirTime;
+		$time =  $this->endExpirTime - time();
 		if ($time < 0) {
 			$time = 0;
 		}
@@ -94,7 +111,7 @@ class Domain {
 	 * @param string $ipAddress
 	 * @param int $expir
 	 */
-	private function set($domain, $ipAddress, $expir = null) {
+	private function set($domain, $ipAddress, $expir = -1) {
 		
 		if (!empty($expir) && $expir !== -1) {
 			$this->startExpirTime = time();
