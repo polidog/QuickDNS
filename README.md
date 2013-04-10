@@ -11,6 +11,27 @@ Host書き直すのだるいし、ローカル内で共有したい時なんか�
 php5.3以上  
 みなさん、php5.4使いましょうヽ(｀・ω・´)ﾉ ｳﾜｧｧﾝ!
 
+
+インストール
+------------
+
+1. composerをget
+
+    curl -s http://getcomposer.org/installer | php
+
+2. composer.jsonを用意する
+
+    {
+        "require": {
+	    "polidog/ultracache": "*",
+	    "polidog/console": "*"
+        },
+    }    
+
+3. composer installする
+
+    composer.phar install
+
 動かし方
 ------------
 examplesディレクトリの中を見てもらえれば解りますが、基本的には以下のような流れになります。
