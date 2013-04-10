@@ -4,6 +4,7 @@ namespace Polidog\Pdns;
 
 use Polidog\Pdns\Storage\StorageAbstract;
 use Polidog\Pdns\Exception\PdnsException;
+use Polidog\Pdns\Domain\Domain;
 
 /**
  * DNSサーバー
@@ -192,6 +193,7 @@ class Pdns {
 		$this->output("start pdns server", "info");
 		while (true) {
 			try {
+				
 				$len = socket_recvfrom($this->socket, $buffer, 1024 * 4, 0, $ip, $port);
 				if ($len > 0) {
 					$this->lookup($buffer, $ip, $port);
@@ -254,7 +256,6 @@ class Pdns {
 	 * @throws PdnsException
 	 */
 	private function lookup($buffer, $client_ip, $client_port) {
-
 		// ドメインの抜き出し
 		$domainName = false;
 		$tmp = substr($buffer, 12);
@@ -268,29 +269,28 @@ class Pdns {
 			$domainName .= substr($tmp, $i + 1, $char) . ".";
 			$i += $char;
 		}
+		$domainName = rtrim($domainName, ".");
+		
 		$i += 2;
 		$queryType = array_search((string) ord($tmp[$i]), $this->getTypes());
 		if ($queryType != "A" && $queryType != "CNAME") {
 			// Aレコード以外はムリポ
-			return $this->lookupExternal($domainName, $buffer, $client_ip, $client_port);
-		}
-
-		$this->output("question domain:{$domainName}", "info");
-		$this->output("query type:{$queryType}", "info");
-
-		$domainObject = $this->Storage->get(rtrim($domainName, "."));
-		if (!$domainObject->is()) {
-			// キャッシュから取得する
-			$domainObject = $this->Storage->getCache(rtrim($domainName, "."));
+			return $this->lookupExternal($domainName, $buffer, $client_ip, $client_port, false);
 		}
 		
-		$this->output("ip address:{$domainObject->ipAddress}", "info");
+		$this->output("question domain:{$domainName}", "info");
+		$this->output("query type:{$queryType}", "info");
+		
+		$domainObject = $this->Storage->searchDomain($domainName);
+		
 		
 		if (!$domainObject->is()) {
 			// ローカル環境で名前解決出来ない場合はそとに行く
-			$this->output("call lookupExternal", "debug");
+			$this->output("call lookupExternal", "info");
 			return $this->lookupExternal($domainName, $buffer, $client_ip, $client_port);
 		}
+		
+		$this->output("ip address:{$domainObject->ipAddress}", "info");
 
 		$answer = $buffer[0] . $buffer[1] . chr(129) . chr(128) . $buffer[4] . $buffer[5] . $buffer[4] . $buffer[5] . chr(0) . chr(0) . chr(0) . chr(0);
 		$answer .= substr($buffer, 12);
@@ -311,7 +311,7 @@ class Pdns {
 	 * @param string $client_port
 	 * @throws PdnsException
 	 */
-	private function lookupExternal($domainName, $buffer, $client_ip, $client_port) {
+	private function lookupExternal($domainName, $buffer, $client_ip, $client_port, $useCache = true) {
 		$socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 		$externalDnsIp = $this->get('external_dns');
 		if (!$externalDnsIp) {
@@ -335,8 +335,8 @@ class Pdns {
 		$ip = rtrim($ip, ".");
 
 		// キャッシュする
-		if (!empty($ip)) {
-			$this->Storage->setCache(rtrim($domainName, "."), $ip, 3600);
+		if (!empty($ip) && $useCache) {
+			$this->Storage->save(new Domain(rtrim($domainName,','),$ip,3600));
 		}
 
 		// クライアントにDNSの結果を渡す

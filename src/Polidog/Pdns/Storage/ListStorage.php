@@ -1,51 +1,70 @@
 <?php
 namespace Polidog\Pdns\Storage;
-use Polidog\Pdns\Domain\DomainList;
-use \Polidog\Pdns\Domain\Domain;
+use Polidog\Pdns\Exception\PdnsException;
+use Polidog\Pdns\Domain\DomainIterator;
+use Polidog\Pdns\Domain\Domain;
 
-class ListStorage extends StorageAbstract {
+/**
+ * リスト型のストレージ
+ * @property ArrayObject $DomainList 
+ */
+class ListStorage implements StorageInterface {
 	
-	protected $DomainList;
-	protected $CacheDomainList;
-
-
-
-
-	public function __construct($config) {
-		parent::__construct($config);
-		$this->DomainList = new DomainList();
-		$this->CacheDomainList = new DomainList();
+	public function __construct($config = array()) {
 		
-		if (isset($config['data']) && is_array($config['data'])) {
-			foreach ($config['data'] as $domain => $ip) {
-				$this->set($domain, $ip);
-			}
+		$this->DomainList = new \ArrayObject();
+		
+		
+		
+		if (!isset($config['data']) || empty($config['data'])) {
+			throw PdnsException("domain name list not found!!");
 		}
 		
+		
+		foreach ($config['data'] as $domain => $ip) {
+			$this->save(new Domain($domain,$ip));
+		}
 	}
 	
-	public function get($domain) {
-		return $this->DomainList->searchDomain($domain);
+	/**
+	 * ドメイン検索を行う
+	 * @param type $domainName
+	 * @return Domain
+	 */
+	public function searchDomain($domainName) {
+		$iterator = new DomainIterator($this->DomainList);
+		foreach ($iterator as $domain) {
+			if ($domain->domainExist($domainName)) {
+				return $domain;
+			}
+		}
+		return new Domain();
 	}
 	
-	public function set($domain, $ip, $expir = -1) {
-		$this->DomainList->set(new Domain($domain,$ip,$expir));
+	/**
+	 * IPアドレスから検索する
+	 * @param string $ipAddress
+	 * @return Domain
+	 */
+	public function searchIPAddress($ipAddress) {
+		$iterator = new DomainIterator($this->DomainList);
+		foreach ($iterator as $domain) {
+			if ($domain->current()->ipAddressExist($ipAddress)) {
+				return $domain->current();
+			}
+		}
+		return new Domain();
+	}
+	
+	/**
+	 * ドメインの保存処理
+	 * @param \Polidog\Pdns\Storage\Domain $domain
+	 * @return \Polidog\Pdns\Storage\ListStorage
+	 */
+	public function save(Domain $domain) {
+		if ($domain->is()) {
+			$this->DomainList->append($domain);
+		}
 		return $this;
 	}
-	
-	public function getCache($domain) {
-		return $this->CacheDomainList->searchDomain($domain);
-	}
-	
-	public function setCache($domain, $ip, $expir) {
-		$this->CacheDomainList->set(new Domain($domain,$ip,$expir));
-		return $this;
-	}
-	
-	public function clearCache($domain) {
-		return $this->CacheDomainList->clearDomain($domain);
-	}
-
-
-	
 }
