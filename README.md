@@ -16,67 +16,33 @@ php5.3以上
 examplesディレクトリの中を見てもらえれば解りますが、基本的には以下のような流れになります。
 1. オートローダーを設定する
 てかcomposer installとかすれば多分勝手にautoloder作られるよ！
-2. コマンドクラスのインスタンスを生成する
-3. executeする
-4. CLIで実行するときに使いたいコマンドのに合わせて引数を渡す
+2. サーバーインスタンス生成する
+3. setStorageConfigのなかでkeyがdataの入れ鵜tにドメインとipを設定する
+ドメイン名をキー、valueをIPを指定する
+※FQDNじゃなくてドメイン名ね！
 
-例:~/bin/command
+あとはlistenメソッドを実行するだけ！！！
+引数でポート指定できるよー！！
+
+
+4.実際に実行してみる
+
+   cd examples
+   sudo php dns_server.php
+※管理者権限が必要です。
+
+この状態だと、UDP:10053ポートで起動しているので、普通に以下のようにdigをうつ
     
-    #!/usr/bin/env php
-    <?php
-        require('../vendor/autoload.php');
-        $command = new Polidog\Console\Console($argv);
-        $command->addPath(__DIR__.DIRECTORY_SEPARATOR.'Command2/');
-        $command->execute();	 
+    dig @localhost -p 10053 www.polidog.jp
+    [info]question domain:www.polidog.jp
+    [info]query type:A
+    [info]ip address:133.242.145.155
 
+こんどはdns設定してないドメインの名前解決をする
 
-こんな感じのクラスがあったとします。
-デフォルトでStringクラスがあるのでStringクラスを実行する事を考えます。
+    dig @localhost -p 10053 www.yahoo.co.jp
+    [info]question domain:www.yahoo.co.jp
+    [info]query type:A
+    [info]call lookupExternal
 
-     polidog$ cd ~/bin
-     polidog$ ./command string urlencode テスト!
-     %E3%83%86%E3%82%B9%E3%83%88%21
-
-
-って感じでurlencodeされた値が表示されます。
-
-
-
-例えば、引数にurlencodeを指定しない場合、つまりクラス名しか指定していない場合は
-mainメソッドをオーバーライドしなければ、メソッド一覧がでる使用になっています。
-
-    polidog$ cd ~/bin
-    polidog$ ./command string
-        base64	string　指定した文字列をbase64エンコードする
-        urlencode	string　URLエンコードをする
-        urldecode	string　URLデコードする
-        unserialize	string　指定したシリアライズされた配列を普通の配列に戻して出力する
-        serialize	string　配列なシンタックスの文字列をシリアライズした値に変更する
-
-ちなみに標準で搭載されている、listメソッドを使っても一覧を出す事が出来ます。
-
-    polidog$ ./command string list
-        base64	string　指定した文字列をbase64エンコードする
-        urlencode	string　URLエンコードをする
-        urldecode	string　URLデコードする
-        unserialize	string　指定したシリアライズされた配列を普通の配列に戻して出力する
-        serialize	string　配列なシンタックスの文字列をシリアライズした値に変更する
-
-
-コマンドの拡張の仕方
-------------
-拡張したいコマンド用クラスはどこに置いてもかまいません。
-Consoleクラスが生成されたあとにaddPathで使用したいクラスのパスを追加することができます。
-examplesのcommandファイルには以下のようなコードが記載されています。
-    
-    $command->addPath(__DIR__.DIRECTORY_SEPARATOR.'Command2/');
-
-これにより、examples/Command2いかのディレクトリにCommandAbstractを継承したクラスを用意しておけば、そのクラスを使用できます。
-また、あたりまえですが、クラス名=ファイル名になっていないと利用できません。
-
-で、例えばCommand2/には言ってるTestクラスを呼び出すときには以下のようにすればいいです
-
-    ./command test
-    Hello extend command
-
-これだけで、Command2にあるテストクラスが実行されます。
+lookupExternalと言われているので、これで外に問い合わせに行ってると思います。
