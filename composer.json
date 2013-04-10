@@ -1,4 +1,19 @@
 {
+	"name": "polidog/pdns",
+	"description": "PHP DNS Server",
+	"keywords" : ["dns"],
+	"homepage" : "https://github.com/polidog/Pdns",
+	"license"  : "MIT",
+	"authors": [
+		{
+			"name": "polidog",
+			"email": "polidogs@gmail.com",
+			"homepage": "http://www.polidog.jp"
+		}
+	],	
+    "require": {
+        "php": ">=5.3.3"
+    },	
     "autoload": {
         "psr-0": {"Polidog\\Pdns": "src"}
     }
