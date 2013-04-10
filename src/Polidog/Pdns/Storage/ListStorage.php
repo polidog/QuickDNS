@@ -33,7 +33,6 @@ class ListStorage implements StorageInterface {
 	 */
 	public function searchDomain($domainName) {
 		$iterator = new DomainIterator($this->DomainList);
-		var_dump(count($iterator));
 		foreach ($iterator as $domain) {
 			if ($domain->domainExist($domainName)) {
 				return $domain;
