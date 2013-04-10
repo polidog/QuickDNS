@@ -1,23 +1,19 @@
 <?php
 namespace Polidog\Pdns\Domain;
 
-class DomainIterator extends \FilterIterator {
+class DomainIterator extends \ArrayIterator {
 	
-	public function __construct(\Iterator $iterator) {
-		parent::__construct($iterator);
-		$this->rewind();
+	public function __construct($value) {
+		parent::__construct($value);
 	}
 	
-	public function accept() {
-		return ($this->getInnerIterator()->current()->isExpired() == false);
-	}
-	
-	public function currentIp() {
-		$this->current()->ipAddress;
-	}
-	
-	public function currentDomain() {
-		return $this->current()->domain;
+	public function current() {
+		$domain = parent::current();
+		if (! $domain->is()) {
+			$this->offsetUnset($this->key());
+			return new Domain();
+		}
+		return $domain;
 	}
 
 	public function __toString() {
