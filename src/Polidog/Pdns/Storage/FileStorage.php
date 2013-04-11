@@ -1,30 +1,22 @@
 <?php
 namespace Polidog\Pdns\Storage;
-use \Polidog\Pdns\Exception\PdnsException;
-use \Polidog\Pdns\Domain\Domain;
+use Polidog\Pdns\Exception\PdnsException;
+use Polidog\Pdns\Domain\DomainIterator;
+use Polidog\Pdns\Domain\Domain;
 
+/**
+ * ファイル型ストレージ
+ */
 class FileStorage implements StorageInterface
 {
 	private $DomainList;
 	
-	public function __construct($filename,$callback = null) {
-		if (!file_exists($filename)) {
-			throw new PdnsException("file not found path=".$filename);
+	public function __construct(array $files,$type = 'ini') {
+		if (empty($files)) {
+			throw new PdnsException("file not found");
 		}
-		$domains = null;
-		if (!empty($callback)) {
-			$domains = $callback($filename);
-		} else {
-			$domains = parse_ini_file($filename);
-		}
-		
-		if (empty($domains)) {
-			throw new PdnsException("data not found");
-		}		
-		
-		foreach ($domains as $domain => $ip) {
-			$this->save(new Domain($domain,$ip));
-		}
+		$this->DomainList = new \ArrayObject();
+		$this->loadFile($files);
 	}
 	
 	/**
@@ -67,5 +59,19 @@ class FileStorage implements StorageInterface
 			$this->DomainList->append($domain);
 		}
 		return $this;
+	}
+	
+	
+	private function loadFile(array $paths) {
+		foreach ($paths as $path) {
+			if (file_exists($path)) {
+				$tmp = parse_ini_file($path);
+				if (is_array($tmp)) {
+					foreach ($tmp as $domain => $ip) {
+						$this->save(new Domain($domain,$ip));
+					}
+				}
+			}
+		}
 	}
 }
