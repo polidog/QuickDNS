@@ -2,9 +2,9 @@
 
 namespace Polidog\Pdns;
 
-use Polidog\Pdns\Storage\StorageAbstract;
 use Polidog\Pdns\Exception\PdnsException;
 use Polidog\Pdns\Domain\Domain;
+use Polidog\Pdns\Storage\StorageInterface;
 
 /**
  * DNSサーバー
@@ -95,38 +95,6 @@ class Pdns {
 	}
 
 	/**
-	 * ストレージ設定をする
-	 * @param type $key
-	 * @param type $value
-	 */
-	public function setStorageConfig($key, $value = null) {
-		if (is_array($key)) {
-			foreach ($key as $k => $v) {
-				$this->setStorageConfig($k, $v);
-			}
-		} else {
-			$this->config['storage_config'][$key] = $value;
-		}
-	}
-
-	/**
-	 * ストレージ設定を取得する
-	 * @param key $key
-	 * @return boolean
-	 */
-	public function getStorageConfig($key = null) {
-		$config = $this->get('storage_config');
-		if (empty($key)) {
-			return $config;
-		}
-
-		if (isset($config[$key])) {
-			return $config[$key];
-		}
-		return false;
-	}
-
-	/**
 	 * 初期化処理
 	 * @param closer $callback コールバッック処理用のfunction
 	 * @return mixed
@@ -161,8 +129,6 @@ class Pdns {
 
 		self::$isInit = true;
 
-		// ストレージのインスタンス化
-		$this->loadStorage($this->get());
 	}
 
 	/**
@@ -206,46 +172,22 @@ class Pdns {
 			}
 		}
 	}
-
-	/**
-	 * クロージャーか判定する
-	 * @param $closuer
-	 * @return boolean
-	 */
-	private function isClosure($closuer) {
-		return ( is_object($closuer) && $closuer instanceof \Closure );
-	}
-
 	
 	/**
 	 * ストレージを取得する
-	 * @return array
+	 * @return StorageInterface
 	 */
 	public function getStorage() {
 		return $this->Storage;
 	}
 	
-	
 	/**
-	 * ドライバーをロードする
-	 * @param array $config
-	 * @throws PdnsException
+	 * ストレージをセットする
+	 * @param \Polidog\Pdns\Storage\StorageInterface $storage
 	 */
-	private function loadStorage() {
-		
-		$config = $this->getStorageConfig();
-		if ( !$config || !isset($config['type'])) {
-			throw new PdnsException("storage setting not found");
-		}
-		$type = ucwords($config['type']);
-		$className = __NAMESPACE__ . "\\Storage\\" . $type . 'Storage';
-		if (!class_exists($className)) {
-			throw new PdnsException("driver class not found");
-		}
-		
-		$this->Storage = new $className($config);
+	public function setStorage(StorageInterface $storage) {
+		$this->Storage = $storage;
 	}
-	
 
 	/**
 	 * DNSに問い合わせ処理をする
@@ -343,6 +285,13 @@ class Pdns {
 		socket_sendto($this->socket, $resultBuffer, strlen($resultBuffer), 0, $client_ip, $client_port);
 	}
 
+	
+	/**
+	 * 出力処理を行う
+	 * @param string $message
+	 * @param string $prefix
+	 * @return void
+	 */
 	private function output($message, $prefix = "") {
 		if (!$this->get('stdout')) {
 			return;
@@ -356,10 +305,20 @@ class Pdns {
 		echo $output;
 	}
 
+	
+	/**
+	 * DNSの問い合わせタイプを取得する
+	 * @return array
+	 */
 	private function getTypes() {
 		return static::$dnsTypes;
 	}
 	
+	
+	/**
+	 * 設定ファイルを取得する
+	 * @return closuer
+	 */
 	final public function getDefaultConfig() {
 		
 		$defaultConfig = array();
@@ -382,5 +341,14 @@ class Pdns {
 			return $defaultConfig;
 		};
 	}
+	
+	/**
+	 * クロージャーか判定する
+	 * @param $closuer
+	 * @return boolean
+	 */
+	private function isClosure($closuer) {
+		return ( is_object($closuer) && $closuer instanceof \Closure );
+	}	
 
 }

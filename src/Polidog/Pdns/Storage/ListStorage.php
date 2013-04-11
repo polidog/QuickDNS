@@ -10,18 +10,15 @@ use Polidog\Pdns\Domain\Domain;
  */
 class ListStorage implements StorageInterface {
 	
-	public function __construct($config = array()) {
+	public function __construct(array $domainList) {
 		
 		$this->DomainList = new \ArrayObject();
 		
-		
-		
-		if (!isset($config['data']) || empty($config['data'])) {
+		if (empty($domainList)) {
 			throw PdnsException("domain name list not found!!");
 		}
 		
-		
-		foreach ($config['data'] as $domain => $ip) {
+		foreach ($domainList as $domain => $ip) {
 			$this->save(new Domain($domain,$ip));
 		}
 	}
