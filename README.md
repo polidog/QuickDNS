@@ -23,8 +23,7 @@ php5.3以上
 
     {
         "require": {
-	    "polidog/ultracache": "*",
-	    "polidog/console": "*"
+		    "polidog/quickdns": "*",
         },
     }    
 
@@ -49,7 +48,7 @@ examplesディレクトリの中を見てもらえれば解りますが、基本
 4.実際に実行してみる
 
    cd examples
-   sudo php dns_server.php
+   sudo php example1.php
 ※管理者権限が必要です。
 
 この状態だと、UDP:10053ポートで起動しているので、普通に以下のようにdigをうつ
