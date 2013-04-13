@@ -23,7 +23,7 @@ php5.3以上
 
     {
         "require": {
-		    "polidog/quickdns": "*",
+		    "polidog/quick-dns": "*",
         },
     }    
 
