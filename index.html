@@ -3,30 +3,41 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Pdns by polidog</title>
-
+    <title>QuickDNS by polidog</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
   </head>
   <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/polidog/QuickDNS">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/polidog/QuickDNS/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/polidog/QuickDNS/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
     <div class="wrapper">
-      <header>
-        <h1>Pdns</h1>
-        <p>php dns server</p>
-        <p class="view"><a href="https://github.com/polidog/Pdns">View the Project on GitHub <small>polidog/Pdns</small></a></p>
-        <ul>
-          <li><a href="https://github.com/polidog/Pdns/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/polidog/Pdns/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/polidog/Pdns">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
+
       <section>
+        <div id="title">
+          <h1>QuickDNS</h1>
+          <p>php dns server</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/polidog">polidog</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
         <h1>PHPでDNSの正引きをするためのライブラリ！！！</h1>
 
 <p>Host書き直すのだるいし、ローカル内で共有したい時なんかに使えます。
@@ -51,8 +62,7 @@
 
 <p>{
     "require": {
-    "polidog/ultracache": "*",
-    "polidog/console": "*"
+        "polidog/quick-dns": "*",
     },
 }    </p>
 </li>
@@ -77,7 +87,7 @@
 <p>4.実際に実行してみる</p>
 
 <p>cd examples
-   sudo php dns_server.php
+   sudo php example1.php
 ※管理者権限が必要です。</p>
 
 <p>この状態だと、UDP:10053ポートで起動しているので、普通に以下のようにdigをうつ</p>
@@ -98,11 +108,8 @@
 
 <p>lookupExternalと言われているので、これで外に問い合わせに行ってると思います。</p>
       </section>
+
     </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/polidog">polidog</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
   </body>
