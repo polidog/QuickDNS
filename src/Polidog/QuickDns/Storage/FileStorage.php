@@ -42,8 +42,8 @@ class FileStorage implements StorageInterface
 	public function searchIPAddress($ipAddress) {
 		$iterator = new DomainIterator($this->DomainList);
 		foreach ($iterator as $domain) {
-			if ($domain->current()->ipAddressExist($ipAddress)) {
-				return $domain->current();
+			if ($domain->ipAddressExist($ipAddress)) {
+				return $domain;
 			}
 		}
 		return new Domain();
