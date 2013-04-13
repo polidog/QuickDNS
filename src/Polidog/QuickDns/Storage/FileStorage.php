@@ -1,8 +1,8 @@
 <?php
-namespace Polidog\Pdns\Storage;
-use Polidog\Pdns\Exception\PdnsException;
-use Polidog\Pdns\Domain\DomainIterator;
-use Polidog\Pdns\Domain\Domain;
+namespace Polidog\QuickDns\Storage;
+use Polidog\QuickDns\Exception\QuickDnsException;
+use Polidog\QuickDns\Domain\DomainIterator;
+use Polidog\QuickDns\Domain\Domain;
 
 /**
  * ファイル型ストレージ
@@ -13,7 +13,7 @@ class FileStorage implements StorageInterface
 	
 	public function __construct(array $files,$type = 'ini') {
 		if (empty($files)) {
-			throw new PdnsException("file not found");
+			throw new QuickDnsException("file not found");
 		}
 		$this->DomainList = new \ArrayObject();
 		$this->loadFile($files);
@@ -22,7 +22,7 @@ class FileStorage implements StorageInterface
 	/**
 	 * ドメインをサーチする
 	 * @param string $domainName
-	 * @return \Polidog\Pdns\Domain\Domain
+	 * @return \Polidog\QuickDns\Domain\Domain
 	 */
 	public function searchDomain($domainName) {
 		$iterator = new DomainIterator($this->DomainList);
@@ -37,7 +37,7 @@ class FileStorage implements StorageInterface
 	/**
 	 * IPを検索する
 	 * @param string $ipAddress
-	 * @return \Polidog\Pdns\Domain\Domain
+	 * @return \Polidog\QuickDns\Domain\Domain
 	 */
 	public function searchIPAddress($ipAddress) {
 		$iterator = new DomainIterator($this->DomainList);
@@ -51,8 +51,8 @@ class FileStorage implements StorageInterface
 	
 	/**
 	 * ドメインを記録する
-	 * @param \Polidog\Pdns\Domain\Domain $domain
-	 * @return \Polidog\Pdns\Storage\FileStorage
+	 * @param \Polidog\QuickDns\Domain\Domain $domain
+	 * @return \Polidog\QuickDns\Storage\FileStorage
 	 */
 	public function save(Domain $domain) {
 		if ($domain->is()) {

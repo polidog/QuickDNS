@@ -1,8 +1,8 @@
 <?php
 require './vendor/autoload.php';
-use Polidog\Pdns\Pdns;
+use Polidog\QuickDns\QuickDns;
 
-$server = new Pdns();
+$server = new QuickDns();
 
 $server->init(function() use ($server){
 	$server->setStorageConfig(array(
@@ -16,6 +16,6 @@ $server->init(function() use ($server){
 
 try {
 	$server->listen(10053);
-} catch (PdnsException $pe) {
+} catch (QuickDnsException $pe) {
 	echo $pe->getMessage()."\n";
 }

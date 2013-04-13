@@ -1,12 +1,12 @@
 <?php
 // ファイルを使用したDNSサーバの作成
 require '../vendor/autoload.php';
-use Polidog\Pdns\Pdns;
-use Polidog\Pdns\Exception\PdnsDomainException;
+use Polidog\QuickDns\QuickDns;
+use Polidog\QuickDns\Exception\QuickDnsDomainException;
 
-$server = new Pdns();
+$server = new QuickDns();
 $server->init(function() use ($server) {
-	$server->setStorage(new \Polidog\Pdns\Storage\FileStorage(array(
+	$server->setStorage(new \Polidog\QuickDns\Storage\FileStorage(array(
 		'./list.ini',
 		'./list2.ini'
 	)));
@@ -16,6 +16,6 @@ $server->init(function() use ($server) {
 
 try {
 	$server->listen(10053);
-} catch (PdnsDomainException $pe) {
+} catch (QuickDnsDomainException $pe) {
 	echo $pe->getMessage();
 }

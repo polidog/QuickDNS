@@ -1,12 +1,12 @@
 <?php
 // listタイプのストレージを使ったDNSサーバの起動
 require '../vendor/autoload.php';
-use Polidog\Pdns\Pdns;
-use Polidog\Pdns\Exception\PdnsDomainException;
+use Polidog\QuickDns\QuickDns;
+use Polidog\QuickDns\Exception\QuickDnsDomainException;
 
-$server = new Pdns();
+$server = new QuickDns();
 $server->init(function() use ($server) {
-	$server->setStorage(new \Polidog\Pdns\Storage\ListStorage(array(
+	$server->setStorage(new \Polidog\QuickDns\Storage\ListStorage(array(
 		'www.polidog.jp' => '133.242.145.155'
 	)));
 	$server->set('stdout', true);
@@ -15,6 +15,6 @@ $server->init(function() use ($server) {
 
 try {
 	$server->listen(10053);
-} catch (PdnsDomainException $pe) {
+} catch (QuickDnsDomainException $pe) {
 	echo $pe->getMessage();
 }

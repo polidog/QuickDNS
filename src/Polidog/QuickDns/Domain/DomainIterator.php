@@ -1,5 +1,5 @@
 <?php
-namespace Polidog\Pdns\Domain;
+namespace Polidog\QuickDns\Domain;
 
 class DomainIterator extends \ArrayIterator {
 	

@@ -1,6 +1,6 @@
 <?php
-namespace Polidog\Pdns\Domain;
-use  \Polidog\Pdns\Exception\PdnsDomainException;
+namespace Polidog\QuickDns\Domain;
+use  \Polidog\QuickDns\Exception\QuickDnsDomainException;
 class Domain {
 
 	private $domain;
@@ -94,7 +94,7 @@ class Domain {
 	public function exportIpAddressBinary() {
 		
 		if (!$this->is()) {
-			throw new PdnsDomainException("not use domain object");
+			throw new QuickDnsDomainException("not use domain object");
 		}
 		
 		$_ipAddress = "";

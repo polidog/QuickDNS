@@ -1,8 +1,8 @@
 <?php
-namespace Polidog\Pdns\Storage;
-use Polidog\Pdns\Exception\PdnsException;
-use Polidog\Pdns\Domain\DomainIterator;
-use Polidog\Pdns\Domain\Domain;
+namespace Polidog\QuickDns\Storage;
+use Polidog\QuickDns\Exception\QuickDnsException;
+use Polidog\QuickDns\Domain\DomainIterator;
+use Polidog\QuickDns\Domain\Domain;
 
 /**
  * リスト型のストレージ
@@ -15,7 +15,7 @@ class ListStorage implements StorageInterface {
 		$this->DomainList = new \ArrayObject();
 		
 		if (empty($domainList)) {
-			throw PdnsException("domain name list not found!!");
+			throw QuickDnsException("domain name list not found!!");
 		}
 		
 		foreach ($domainList as $domain => $ip) {
@@ -55,8 +55,8 @@ class ListStorage implements StorageInterface {
 	
 	/**
 	 * ドメインの保存処理
-	 * @param \Polidog\Pdns\Storage\Domain $domain
-	 * @return \Polidog\Pdns\Storage\ListStorage
+	 * @param \Polidog\QuickDns\Storage\Domain $domain
+	 * @return \Polidog\QuickDns\Storage\ListStorage
 	 */
 	public function save(Domain $domain) {
 		if ($domain->is()) {

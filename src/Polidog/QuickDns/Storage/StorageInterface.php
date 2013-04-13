@@ -1,6 +1,6 @@
 <?php
-namespace Polidog\Pdns\Storage;
-use Polidog\Pdns\Domain\Domain;
+namespace Polidog\QuickDns\Storage;
+use Polidog\QuickDns\Domain\Domain;
 /**
  * 
  */

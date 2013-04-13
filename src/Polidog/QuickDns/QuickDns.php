@@ -1,10 +1,10 @@
 <?php
 
-namespace Polidog\Pdns;
+namespace Polidog\QuickDns;
 
-use Polidog\Pdns\Exception\PdnsException;
-use Polidog\Pdns\Domain\Domain;
-use Polidog\Pdns\Storage\StorageInterface;
+use Polidog\QuickDns\Exception\QuickDnsException;
+use Polidog\QuickDns\Domain\Domain;
+use Polidog\QuickDns\Storage\StorageInterface;
 
 /**
  * DNSサーバー
@@ -12,7 +12,7 @@ use Polidog\Pdns\Storage\StorageInterface;
  * @property socket $socket DNS問い合わせ用のソケット
  * @property socket $consoleSocket コンソール接続用のソケット
  */
-class Pdns {
+class QuickDns {
 
 	private static $isInit = false;
 	private $socket;
@@ -60,13 +60,13 @@ class Pdns {
 	 * 設定をセットする
 	 * @param mixed $key
 	 * @param mixed $value
-	 * @return \Polidog\Pdns\Pdns
-	 * @throws PdnsException
+	 * @return \Polidog\QuickDns\QuickDns
+	 * @throws QuickDnsException
 	 */
 	public function set($key, $value = null) {
 
 		if (self::$isInit == true) {
-			throw new PdnsException('is callded init method');
+			throw new QuickDnsException('is callded init method');
 		}
 
 		if (is_array($key)) {
@@ -98,7 +98,7 @@ class Pdns {
 	 * 初期化処理
 	 * @param closer $callback コールバッック処理用のfunction
 	 * @return mixed
-	 * @throws PdnsException
+	 * @throws QuickDnsException
 	 */
 	public function init($callback = null) {
 
@@ -106,7 +106,7 @@ class Pdns {
 			return;
 
 		if (empty($callback)) {
-			throw new PdnsException();
+			throw new QuickDnsException();
 		}
 
 		if (is_array($callback)) {
@@ -119,12 +119,12 @@ class Pdns {
 			}
 
 			if (!$isCall) {
-				throw new PdnsException();
+				throw new QuickDnsException();
 			}
 		} else if ($this->isClosure($callback)) {
 			$callback();
 		} else {
-			throw new PdnsException();
+			throw new QuickDnsException();
 		}
 
 		self::$isInit = true;
@@ -141,7 +141,7 @@ class Pdns {
 			$_this = $this;
 			$this->init(function() use ($_this) {
 				// デフォルト設定
-				$_this->set(Pdns::BASE_CONFIG);
+				$_this->set(QuickDns::BASE_CONFIG);
 			});
 		}
 
@@ -151,12 +151,12 @@ class Pdns {
 
 		$this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 		if ($this->socket < 0) {
-			throw new PdnsException('socket no create');
+			throw new QuickDnsException('socket no create');
 		}
 		if (socket_bind($this->socket, $localip, $port) == false)
-			throw new PdnsException('socket no bind');
+			throw new QuickDnsException('socket no bind');
 
-		$this->output("start pdns server", "info");
+		$this->output("start QuickDns server", "info");
 		while (true) {
 			try {
 				
@@ -164,11 +164,11 @@ class Pdns {
 				if ($len > 0) {
 					$this->lookup($buffer, $ip, $port);
 				}
-			} catch (PdnsException $pdns) {
+			} catch (QuickDnsException $QuickDns) {
 				if (!empty($this->socket)) {
 					socket_close($this->socket);
 				}
-				$this->output($pdns->getMessage(), 'error');
+				$this->output($QuickDns->getMessage(), 'error');
 			}
 		}
 	}
@@ -183,7 +183,7 @@ class Pdns {
 	
 	/**
 	 * ストレージをセットする
-	 * @param \Polidog\Pdns\Storage\StorageInterface $storage
+	 * @param \Polidog\QuickDns\Storage\StorageInterface $storage
 	 */
 	public function setStorage(StorageInterface $storage) {
 		$this->Storage = $storage;
@@ -195,7 +195,7 @@ class Pdns {
 	 * @param string $client_ip
 	 * @param string $client_port
 	 * @return null
-	 * @throws PdnsException
+	 * @throws QuickDnsException
 	 */
 	private function lookup($buffer, $client_ip, $client_port) {
 		// ドメインの抜き出し
@@ -241,7 +241,7 @@ class Pdns {
 		$answer .= $domainObject->exportIpAddressBinary();
 
 		if (socket_sendto($this->socket, $answer, strlen($answer), 0, $client_ip, $client_port) === false) {
-			throw new PdnsException("not found");
+			throw new QuickDnsException("not found");
 		}
 	}
 
@@ -251,13 +251,13 @@ class Pdns {
 	 * @param string $buffer
 	 * @param string $client_ip
 	 * @param string $client_port
-	 * @throws PdnsException
+	 * @throws QuickDnsException
 	 */
 	private function lookupExternal($domainName, $buffer, $client_ip, $client_port, $useCache = true) {
 		$socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 		$externalDnsIp = $this->get('external_dns');
 		if (!$externalDnsIp) {
-			throw new PdnsException("no external dns server ip address");
+			throw new QuickDnsException("no external dns server ip address");
 		}
 
 		// 別DNSの問い合わせ
