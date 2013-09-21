@@ -1,38 +1,35 @@
-PHPでDNSの正引きをするためのライブラリ！！！
-==========
-
+# PHPでDNSの正引きをするためのライブラリ！！！
 Host書き直すのだるいし、ローカル内で共有したい時なんかに使えます。
 ※絶対にLAN内で使用するようにしてください。。。
 ネットワークに不具合が起きても責任もてないし・・・使用する時は自己責任でお願いします。
 
+## ライセンス
+MIT License
 
-動作環境
-------------
-php5.3以上  
-みなさん、php5.4使いましょうヽ(｀・ω・´)ﾉ ｳﾜｧｧﾝ!
+## 動作環境
+php5.3以上
+みなさん、php5.5使いましょうヽ(｀・ω・´)ﾉ ｳﾜｧｧﾝ!
 
 
-インストール
-------------
-
+## インストール
 1. composerをget
-
-    curl -s http://getcomposer.org/installer | php
-
+```
+$ curl -s http://getcomposer.org/installer | php
+```
 2. composer.jsonを用意する
-
+```
     {
         "require": {
 		    "polidog/quick-dns": "*",
         },
     }    
-
+```
 3. composer installする
+```
+$ composer.phar install
+```
 
-    composer.phar install
-
-動かし方
-------------
+## 動かし方
 examplesディレクトリの中を見てもらえれば解りますが、基本的には以下のような流れになります。
 1. オートローダーを設定する
 てかcomposer installとかすれば多分勝手にautoloder作られるよ！
